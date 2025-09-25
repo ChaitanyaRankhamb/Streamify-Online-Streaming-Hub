@@ -41,7 +41,7 @@ function HeroSection() {
       />
 
       {/* Text on top */}
-      <h1 className="text-9xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-indigo-800 via-teal-300 to-violet-800">Streamify</h1>
+      <h1 className="text-9xl max-sm:text-6xl max-md:text-7xl max-lg:text-8xl font-semibold text-transparent bg-clip-text bg-gradient-to-br from-indigo-800 via-teal-300 to-violet-800">Streamify</h1>
 
       <motion.div
         className="box-2 bg-teal-400 "
@@ -62,15 +62,15 @@ function HeroSection() {
       <Loader />
 
       <motion.h1
-        className="text-5xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400"
+        className="text-5xl max-sm:text-2xl max-md:text-3xl max-lg:text-4xl max-sm:w-[300px] font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1 }}
       >
         All Your Entertainment. One Stream.
       </motion.h1>
-      <motion.p
-        className="text-lg md:text-xl mb-8 max-w-xl"
+      <motion.p 
+        className="text-lg md:text-xl mb-8 max-w-xl max-sm:text-sm max-md:text-md max-sm:w-sm max-md:w-lg "
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3, duration: 1 }}

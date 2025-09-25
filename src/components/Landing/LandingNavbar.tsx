@@ -5,8 +5,11 @@ import { Button } from "@/components/ui/button";
 import { ModeToggle } from "../Theme-toggle";
 import { Menu, X } from "lucide-react";
 import { useState } from "react";
+import { LoginForm } from "../login-form";
+import { useRouter } from "next/navigation";
 
 export default function LandingNavbar() {
+  const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
   return (
@@ -50,10 +53,11 @@ export default function LandingNavbar() {
         <div className="flex items-center gap-4">
           {/* Desktop Auth + Theme */}
           <div className="hidden md:flex items-center gap-4">
-            <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-500">
+            <Button variant="ghost" className="text-gray-700 dark:text-gray-300 hover:text-blue-500"
+              onClick={() => router.push("/login")}>
               Log in
             </Button>
-            <Button className="bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-500 text-white">
+            <Button className="bg-gradient-to-r from-blue-500 to-blue-400 hover:from-blue-400 hover:to-blue-500 text-white" onClick={() => router.push("/signup")}>
               Sign Up
             </Button>
             <ModeToggle />
@@ -75,13 +79,32 @@ export default function LandingNavbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div className="md:hidden flex flex-col space-y-4 px-6 pb-4 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
-          <a href="#features" className="hover:text-blue-500">Features</a>
-          <a href="#pricing" className="hover:text-blue-500">Pricing</a>
-          <a href="#about" className="hover:text-blue-500">About</a>
-          <a href="#help" className="hover:text-blue-500">Help</a>
+          {[
+            { label: "Features", id: "features" },
+            { label: "Pricing", id: "pricing" },
+            { label: "Trend", id: "trending" },
+            { label: "Responses", id: "responses" },
+          ].map((link) => (
+            <button
+              key={link.id}
+              onClick={() => {
+                const element = document.getElementById(link.id);
+                if (element) {
+                  const yOffset = -100; // scroll 100px above
+                  const y = element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+                  window.scrollTo({ top: y, behavior: "smooth" });
+                }
+              }}
+              className="hover:text-blue-500"
+            >
+              {link.label}
+            </button>
+          ))}
           <div className="flex gap-2">
-            <Button variant="outline" className="w-20">Log in</Button>
-            <Button variant="secondary" className="w-20 bg-primary text-white">
+            <Button variant="outline" className="w-20" onClick={() => router.push("/login")}>
+              Log in
+            </Button>
+            <Button variant="secondary" className="w-20 bg-primary text-white" onClick={() => router.push("/signup")}>
               Sign Up
             </Button>
           </div>

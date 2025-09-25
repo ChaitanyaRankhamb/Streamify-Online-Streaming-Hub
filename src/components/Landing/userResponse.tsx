@@ -19,9 +19,9 @@ export default function UserResponses() {
   ];
 
   return (
-    <div id="responses" className="flex flex-col md:flex-row items-start justify-between gap-6 py-12 px-6 mx-auto max-w-[1200px] bg-background rounded-2xl shadow-lg border border-border mt-20">
+    <div id="responses" className="flex flex-col md:flex-row items-start justify-between gap-6 py-12 px-6 max-w-[1200px] bg-background rounded-2xl shadow-lg border border-border mx-[5%] lg:mx-auto max-sm:max-w-[500px]">
       {/* Left Title */}
-      <p className="text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-l from-primary via-secondary to-accent mb-10 md:mb-0 basis-2/5">
+      <p className="responsive-heading text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-l from-primary via-secondary to-accent mb-10 md:mb-0 basis-2/5">
         What Our <span className="font-bold text-5xl">Users</span> Say?
       </p>
 
