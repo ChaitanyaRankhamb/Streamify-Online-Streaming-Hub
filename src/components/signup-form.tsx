@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { validateRegister } from "@/models/signupSchema"
 import RegisterFallback from "./SignupFallback"
+import { FaGithub } from "react-icons/fa"
 
 export interface FormData {
   username: string
@@ -169,7 +170,8 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                   className="text-lg w-full rounded-xl border-input text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/30 font-medium"
                   disabled={isRegistering}
                 >
-                  Continue with Google
+                  <FaGithub />
+                  Continue with GitHub
                 </Button>
               </div>
             </div>
