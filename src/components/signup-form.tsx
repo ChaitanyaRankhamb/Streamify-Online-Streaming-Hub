@@ -1,87 +1,109 @@
-"use client"
+"use client";
 
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button"
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-import { validateRegister } from "@/models/signupSchema"
-import RegisterFallback from "./SignupFallback"
-import { FaGithub } from "react-icons/fa"
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import RegisterFallback from "./SignupFallback";
+import { FaGithub } from "react-icons/fa";
+import { signIn } from "next-auth/react";
 
-export interface FormData {
-  username: string
-  email: string
-  password: string
-}
+// ✅ Zod schema
+const formSchema = z.object({
+  username: z
+    .string()
+    .min(3, "Username must be at least 3 characters")
+    .max(30, "Username must be less than 30 characters"),
 
-export function SignUpForm({ className, ...props }: React.ComponentProps<"div">) {
-  const router = useRouter()
-  const [errors, setErrors] = useState<string[]>([])
-  const [isRegistering, setIsRegistering] = useState(false)
-  const [formData, setFormData] = useState<FormData>({
-    username: "",
-    email: "",
-    password: "",
-  })
+  email: z.string().email("Invalid email format"),
 
-  async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault()
+  password: z.string().min(8, "Password must be at least 8 characters"),
+});
 
-    const form = e.currentTarget
+type FormData = z.infer<typeof formSchema>;
 
-    // Get values from the form
-    const values: FormData = {
-      username: (form.elements.namedItem("username") as HTMLInputElement).value,
-      email: (form.elements.namedItem("email") as HTMLInputElement).value,
-      password: (form.elements.namedItem("password") as HTMLInputElement).value,
-    }
+export function SignUpForm({
+  className,
+  ...props
+}: React.ComponentProps<"div">) {
+  const router = useRouter();
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [serverErrors, setServerErrors] = useState<string[]>([]);
 
-    // Frontend validation using Zod
-    const result = validateRegister(values)
-    if (!result.success) {
-      setErrors(result.error.issues.map((err) => err.message))
-      return
-    }
+  const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      username: "",
+      email: "",
+      password: "",
+    },
+  });
 
-    setErrors([])
-    setFormData(values)
-    setIsRegistering(true)
+  // ✅ handleSubmit
+  async function onSubmit(values: FormData) {
+    setIsRegistering(true);
+    setServerErrors([]);
 
     try {
       const res = await fetch("/api/auth/signup", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(values),
-      })
+      });
 
       if (res.ok) {
-        const data = await res.json()
-        console.log("Account Created successfully:", data)
-        router.push("/login")
+        const data = await res.json();
+        console.log("Account created successfully:", data);
+
+        // redirect to verification page to verify email
+        router.push("/verify-code?verify-token=" + encodeURIComponent(data.token));
       } else {
-        const errorData = await res.json().catch(() => ({}))
-        const message = errorData.message || "Account creation failed"
-        setErrors([message])
-        setIsRegistering(false)
+        const errorData = await res.json().catch(() => ({}));
+        const message = errorData.message || "Account creation failed";
+        setServerErrors([message]);
+        setIsRegistering(false);
       }
     } catch (err) {
-      setErrors(["An unexpected error occurred"])
-      setIsRegistering(false)
+      setServerErrors(["An unexpected error occurred"]);
+      setIsRegistering(false);
     }
   }
 
+  // ✅ GitHub signup
+  const handleGitHubSignUp = async () => {
+    try {
+      await signIn("github", { callbackUrl: "/dashboard" });
+    } catch (err) {
+      console.error("GitHub signup failed:", err);
+    }
+  };
+
   return (
     <div
-      className={cn("flex flex-col gap-6 font-[Poppins] text-foreground", className)}
+      className={cn(
+        "flex flex-col gap-6 font-[Poppins] text-foreground",
+        className
+      )}
       {...props}
     >
       <Card className="w-[420px] border border-border bg-card/80 backdrop-blur-md shadow-lg rounded-2xl">
@@ -95,64 +117,85 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
         </CardHeader>
 
         <CardContent>
-          {/* Display Errors */}
-          {errors.length > 0 && (
+          {/* Server-side Errors */}
+          {serverErrors.length > 0 && (
             <div className="mb-4 text-red-500 space-y-1">
-              {errors.map((err, idx) => (
+              {serverErrors.map((err, idx) => (
                 <p key={idx}>{err}</p>
               ))}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div className="flex flex-col gap-6">
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(onSubmit)}
+              className="flex flex-col gap-6"
+            >
               {/* Username */}
-              <div className="grid gap-2">
-                <Label htmlFor="username" className="text-lg font-medium">
-                  Username
-                </Label>
-                <Input
-                  id="username"
-                  name="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
-                  required
-                  disabled={isRegistering}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="username"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium">
+                      Username
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Enter your username"
+                        className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
+                        disabled={isRegistering}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* Email */}
-              <div className="grid gap-2">
-                <Label htmlFor="email" className="text-lg font-medium">
-                  Email
-                </Label>
-                <Input
-                  id="email"
-                  name="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
-                  required
-                  disabled={isRegistering}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium">Email</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="email"
+                        placeholder="m@example.com"
+                        className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
+                        disabled={isRegistering}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* Password */}
-              <div className="grid gap-2">
-                <Label htmlFor="password" className="text-lg font-medium">
-                  Password
-                </Label>
-                <Input
-                  id="password"
-                  name="password"
-                  type="password"
-                  placeholder="••••••••"
-                  className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
-                  required
-                  disabled={isRegistering}
-                />
-              </div>
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-lg font-medium">
+                      Password
+                    </FormLabel>
+                    <FormControl>
+                      <Input
+                        type="password"
+                        placeholder="••••••••"
+                        className="!text-lg rounded-xl border-input focus:ring-2 focus:ring-blue-500 transition-all"
+                        disabled={isRegistering}
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
 
               {/* Buttons */}
               <div className="flex flex-col gap-3">
@@ -167,6 +210,7 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                 <Button
                   type="button"
                   variant="outline"
+                  onClick={handleGitHubSignUp}
                   className="text-lg w-full rounded-xl border-input text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/30 font-medium"
                   disabled={isRegistering}
                 >
@@ -174,25 +218,25 @@ export function SignUpForm({ className, ...props }: React.ComponentProps<"div">)
                   Continue with GitHub
                 </Button>
               </div>
-            </div>
 
-            {/* Footer Link */}
-            <div className="mt-6 text-center text-lg text-muted-foreground">
-              Already have an account?{" "}
-              <a
-                href="#"
-                className="text-lg text-blue-500 hover:underline underline-offset-4 font-medium"
-                onClick={() => router.push("/login")}
-              >
-                Login
-              </a>
-            </div>
-          </form>
+              {/* Footer Link */}
+              <div className="mt-6 text-center text-lg text-muted-foreground">
+                Already have an account?{" "}
+                <a
+                  href="#"
+                  className="text-lg text-blue-500 hover:underline underline-offset-4 font-medium"
+                  onClick={() => router.push("/login")}
+                >
+                  Login
+                </a>
+              </div>
+            </form>
+          </Form>
         </CardContent>
       </Card>
 
       {/* Register Fallback */}
-      {isRegistering && <RegisterFallback email={formData.email} />}
+      {isRegistering && <RegisterFallback email={form.getValues("email")} />}
     </div>
-  )
+  );
 }

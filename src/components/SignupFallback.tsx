@@ -8,7 +8,7 @@ function RegisterFallback({ email }: { email: string }) {
       <Card className="mt-12 w-auto h-[200px] flex flex-col gap-4 px-12">
         {/* Logo */}
         <Link href="/" className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 ">
-          AuthX
+          Streamify - Online Streaming Hub
         </Link>
         <div className="flex flex-col items-center justify-center h-[80px] gap-2">
           <p className='text-muted-foreground text-lg'>Please wait</p>

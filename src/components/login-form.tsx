@@ -16,7 +16,7 @@ import { useRouter } from "next/navigation"
 import { useState } from "react"
 import { validateLogin } from "@/models/loginSchema"
 import LoginFallback from "./LoginFallback"
-import GitHub from "next-auth/providers/github"
+import { signIn } from "next-auth/react"   // ✅ Import next-auth client
 
 export interface FormData {
   email: string
@@ -153,11 +153,14 @@ export function LoginForm({ className, ...props }: React.ComponentProps<"div">) 
                 >
                   {isLogin ? "Logging in..." : "Login"}
                 </Button>
+
+                {/* GitHub OAuth Login */}
                 <Button
                   type="button"
                   variant="outline"
-                  className="text-lg w-full rounded-xl border-input text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/30 font-medium"
+                  className="text-lg w-full rounded-xl border-input text-foreground hover:bg-blue-50 dark:hover:bg-blue-900/30 font-medium flex items-center gap-2"
                   disabled={isLogin}
+                  onClick={() => signIn("github", { callbackUrl: "/dashboard" })} // ✅ Added
                 >
                   <FaGithub />
                   Continue with GitHub
