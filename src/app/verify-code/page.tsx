@@ -30,7 +30,7 @@ type VerifySchema = z.infer<typeof verifySchema>
 export default function VerifyCodeForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const token = searchParams.get("verify-token") // secure verification token
+  const encodedToken = searchParams.get("verify-token") // secure verification token
   const [serverError, setServerError] = useState<string | null>(null)
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -38,6 +38,10 @@ export default function VerifyCodeForm() {
     resolver: zodResolver(verifySchema),
     defaultValues: { code: "" },
   })
+
+  console.log("Encoded Token:", encodedToken);
+  const token =  encodedToken ? decodeURIComponent(encodedToken) : null;
+  console.log("Decoded Token:", token);
 
   if (!token) {
     return (

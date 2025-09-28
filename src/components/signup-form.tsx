@@ -73,10 +73,30 @@ export function SignUpForm({
 
       if (res.ok) {
         const data = await res.json();
-        console.log("Account created successfully:", data);
+        console.log("Account created successfully:");
+  
+        // Send verification email
+        const emailResponse = await fetch("api/send/verification-email", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: data.user.email,
+            code: data.user.verificationCode,
+            token: data.user.verificationToken,
+          }),
+        });
 
         // redirect to verification page to verify email
-        router.push("/verify-code?verify-token=" + encodeURIComponent(data.token));
+        if (emailResponse.ok) {
+          router.push(
+            "/verify-code?verify-token=" + encodeURIComponent(data.user.verificationToken)
+          );
+        } else {
+          setServerErrors(["Failed to send verification email. Please try again."]);
+          setIsRegistering(false);
+        }
       } else {
         const errorData = await res.json().catch(() => ({}));
         const message = errorData.message || "Account creation failed";

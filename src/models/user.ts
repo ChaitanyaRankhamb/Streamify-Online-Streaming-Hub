@@ -91,11 +91,9 @@ const userSchema = new Schema<IUser>(
     },
     verificationCode: {
       type: String,
-      required: true,
     },
     expiryDate: {
       type: Date,
-      required: true,
     },
     createdAt: {
       type: Date,
