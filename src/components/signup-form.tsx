@@ -90,6 +90,7 @@ export function SignUpForm({
 
         // redirect to verification page to verify email
         if (emailResponse.ok) {
+          console.log('Verification email sent to:', data.user.email);
           router.push(
             "/verify-code?verify-token=" + encodeURIComponent(data.user.verificationToken)
           );

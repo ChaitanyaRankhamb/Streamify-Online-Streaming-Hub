@@ -5,8 +5,12 @@ import { ErrorInSecretKey } from "../lib/error";
 import bcrypt from "bcryptjs";
 import User from "@/models/user";
 import { cookies } from "next/headers";
+import { connectDB } from "@/lib/mongoose";
 
 export async function HandleUserLoginService(email: string, password: string) {
+  // connect the db
+  await connectDB();
+
   try {
     const user = await User.findOne({ email });
 
