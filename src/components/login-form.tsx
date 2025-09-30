@@ -55,32 +55,31 @@ export function LoginForm({
     setIsLogin(true);
     setServerErrors([]);
 
-   try {
-      const res = await fetch("/api/auth/login", { // your custom login POST API
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+    try {
+      const res = await signIn("credentials", {
+        redirect: false, // disable auto redirect
+        identifier: values.email,
+        password: values.password,
       });
 
-      if (res.ok) {
-        const data = await res.json();
-        console.log("Login successful:", data);
+      if (res?.ok) {
+        console.log("Login successful:", res);
 
         setIsLoginSuccess(true);
-        // Optionally, you can add a small delay to show success state
+
         setTimeout(() => {
           setIsLogin(false);
-          router.refresh(); // refresh to update session state
+          router.refresh(); // update session state
         }, 1000);
 
         // redirect after login
-        router.push("/");
+        router.push("/home");
       } else {
-        const errorData = await res.json().catch(() => ({}));
-        setServerErrors([errorData.message || "Login failed"]);
+        setServerErrors([res?.error || "Login failed"]);
         setIsLogin(false);
       }
     } catch (err) {
+      console.error(err);
       setServerErrors(["An unexpected error occurred"]);
       setIsLogin(false);
     }
@@ -94,7 +93,9 @@ export function LoginForm({
     }
   };
 
-  const [isLoginSuccess, setIsLoginSuccess] = useState<boolean | undefined>(undefined);
+  const [isLoginSuccess, setIsLoginSuccess] = useState<boolean | undefined>(
+    undefined
+  );
 
   return (
     <div
@@ -220,7 +221,12 @@ export function LoginForm({
       </Card>
 
       {/* Login Fallback */}
-      {isLogin && <LoginFallback email={form.getValues("email")} isLoginSuccess={isLoginSuccess ?? false} />}
+      {isLogin && (
+        <LoginFallback
+          email={form.getValues("email")}
+          isLoginSuccess={isLoginSuccess ?? false}
+        />
+      )}
     </div>
   );
 }

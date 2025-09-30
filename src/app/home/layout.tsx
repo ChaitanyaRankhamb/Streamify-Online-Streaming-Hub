@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
 import { ThemeProvider } from "@/components/Theme-Provider";
-import NextAuthSessionProvider from "@/components/Providers/SessionProvider";
 import StreamifyNavbar from "@/components/StreamifyNavbar";
 
 const geistSans = Geist({
@@ -26,20 +24,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head />
-      <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <NextAuthSessionProvider>
-            {children}
-          </NextAuthSessionProvider>
-        </ThemeProvider>
-      </body>
-    </html>
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="system"
+      enableSystem
+      disableTransitionOnChange
+    >
+      <StreamifyNavbar />
+      {children}
+    </ThemeProvider>
   );
 }

@@ -9,6 +9,9 @@ export async function middleware(request: NextRequest) {
   });
   const url = request.nextUrl;
 
+  console.log("token: " , token?.user);
+  
+
   // If user is logged in and tries to access auth pages, redirect to dashboard
   if (
     token &&

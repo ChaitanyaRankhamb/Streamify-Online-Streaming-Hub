@@ -1,10 +1,14 @@
-import StreamifyHeroSection from '@/components/StreamifyHeroSection'
+import HeroSection from '@/components/Home/Hero-section';
 import React from 'react'
 
-function page() {
+async function page() {
+
   return (
     <div>
-      <StreamifyHeroSection />
+      <HeroSection />
+      <div className='mt-20'>
+        chaitu
+      </div>
     </div>
   )
 }
