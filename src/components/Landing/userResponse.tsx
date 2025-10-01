@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { userResponses } from "../constants/userResponse";
+import { userResponses } from "../../data/userResponse";
 
 export default function UserResponses() {
   // Different animation variants
@@ -19,7 +19,10 @@ export default function UserResponses() {
   ];
 
   return (
-    <div id="responses" className="flex flex-col md:flex-row items-start justify-between gap-6 py-12 px-6 max-w-[1200px] bg-background rounded-2xl shadow-lg border border-border mx-[5%] lg:mx-auto max-sm:max-w-[500px]">
+    <div
+      id="responses"
+      className="flex flex-col md:flex-row items-start justify-between gap-6 py-12 px-6 max-w-[1200px] bg-background rounded-2xl shadow-lg border border-border mx-[5%] lg:mx-auto max-sm:max-w-[500px]"
+    >
       {/* Left Title */}
       <p className="responsive-heading text-4xl font-semibold text-transparent bg-clip-text bg-gradient-to-l from-primary via-secondary to-accent mb-10 md:mb-0 basis-2/5">
         What Our <span className="font-bold text-5xl">Users</span> Say?
@@ -46,7 +49,9 @@ export default function UserResponses() {
               transition={{ duration: 0.8, ease: "easeOut" }}
               className="p-6 rounded-xl shadow-md border border-border bg-background text-foreground hover:shadow-xl hover:scale-[1.02] transition"
             >
-              <p className="text-lg font-medium mb-2 text-destructive">@{response.username}</p>
+              <p className="text-lg font-medium mb-2 text-destructive">
+                @{response.username}
+              </p>
               <p className="text-base">{response.text}</p>
             </motion.div>
           ))}

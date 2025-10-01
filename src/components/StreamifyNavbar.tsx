@@ -12,24 +12,41 @@ import GetServerSession from "@/lib/getServerSession";
 import { Session } from "inspector/promises";
 import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
+import { Search } from "lucide-react";
 
 const navCategories: { title: string; href: string; description?: string }[] = [
   { title: "Home", href: "/" },
-  { title: "Movies", href: "/movies", description: "Browse all movies by genre or popularity." },
-  { title: "TV Shows", href: "/tv-shows", description: "Find trending and popular TV shows." },
-  { title: "Trending", href: "/trending", description: "See what’s trending now on Streamify." },
-  { title: "My List", href: "/my-list", description: "Access your personal watchlist." },
+  {
+    title: "Movies",
+    href: "/movies",
+    description: "Browse all movies by genre or popularity.",
+  },
+  {
+    title: "TV Shows",
+    href: "/tv-shows",
+    description: "Find trending and popular TV shows.",
+  },
+  {
+    title: "Trending",
+    href: "/trending",
+    description: "See what’s trending now on Streamify.",
+  },
+  {
+    title: "My List",
+    href: "/my-list",
+    description: "Access your personal watchlist.",
+  },
 ];
 
 export default function StreamifyNavbar() {
   const [isOpen, setIsOpen] = useState(false);
-  const router = useRouter(); 
+  const router = useRouter();
 
   const { data: session } = useSession();
-  
+
   return (
     <nav
-      className="sticky top-0 z-50 border-b transition-colors backdrop-blur-md"
+      className="fixed top-0 left-0 w-full z-50 border-b transition-colors backdrop-blur-md"
       style={{
         backgroundColor: "var(--background)",
         color: "var(--foreground)",
@@ -61,7 +78,15 @@ export default function StreamifyNavbar() {
         {/* Right: Actions */}
         <div className="flex items-center gap-4">
           {/* Desktop */}
+
           <div className="hidden md:flex items-center gap-4">
+            <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center
+             justify-center border-2 border-border hover:bg-muted-foreground/20 active:scale-90">
+              <Search size={18} />
+            </div>
+            <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border border-2-border hover:bg-muted-foreground/30">
+              <ModeToggle />
+            </div>
             {session ? (
               <Avatar>
                 <AvatarImage
@@ -89,11 +114,26 @@ export default function StreamifyNavbar() {
                 </Button>
               </>
             )}
-            <ModeToggle />
           </div>
 
           {/* Mobile */}
           <div className="flex md:hidden items-center gap-2">
+            <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-2 border-border hover:bg-muted-foreground/20 active:scale-90">
+              <Search size={18} className="" />
+            </div>
+            <div className="bg-background/80 w-[30px] h-[30px] rounded-[8px] flex items-center justify-center border border-1-border hover:bg-muted-foreground/30">
+              <ModeToggle  />
+            </div>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border border-1-border text-[var(--foreground)"
+            >
+              {isOpen ? (
+                  <span>✕</span>
+              ) : (
+                  <span>☰</span>
+              )}
+            </button>
             <Avatar>
               {session ? (
                 <AvatarImage
@@ -104,17 +144,6 @@ export default function StreamifyNavbar() {
                 <AvatarFallback>U</AvatarFallback>
               )}
             </Avatar>
-            <ModeToggle />
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="p-2 rounded-md hover:bg-[var(--muted)] transition-colors"
-            >
-              {isOpen ? (
-                <span className="text-[var(--foreground)]">✕</span>
-              ) : (
-                <span className="text-[var(--foreground)]">☰</span>
-              )}
-            </button>
           </div>
         </div>
       </div>
@@ -122,7 +151,7 @@ export default function StreamifyNavbar() {
       {/* Mobile Menu */}
       {isOpen && (
         <div
-          className="md:hidden flex flex-col space-y-4 px-6 pb-4 border-t transition-colors"
+          className="md:hidden flex flex-col space-y-4 px-6 pb-4 border-t transition-colors z-20"
           style={{
             backgroundColor: "var(--background)",
             borderColor: "var(--border)",
@@ -138,15 +167,7 @@ export default function StreamifyNavbar() {
             </Link>
           ))}
 
-          {session ? (
-            <Avatar>
-              <AvatarImage
-                src={session.user?.avatar ?? ""}
-                alt={session.user?.name || "Avatar"}
-              />
-              <AvatarFallback>{session.user?.name?.[0] || "U"}</AvatarFallback>
-            </Avatar>
-          ) : (
+          {!session && (
             <div className="flex gap-2">
               <Button
                 variant="ghost"

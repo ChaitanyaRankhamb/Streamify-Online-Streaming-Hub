@@ -20,7 +20,7 @@ export async function middleware(request: NextRequest) {
       url.pathname.includes("/verify-code") ||
       url.pathname.includes("/"))
   ) {
-    return NextResponse.redirect(new URL("/dashboard", request.url));
+    return NextResponse.redirect(new URL("/home", request.url));
   }
 
   // If user is not logged in and tries to access protected routes, redirect to sign-in

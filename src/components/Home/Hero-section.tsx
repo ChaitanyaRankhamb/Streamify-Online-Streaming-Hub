@@ -2,24 +2,23 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { trendingMovies } from "../constants/trending";
 import Image from "next/image";
 import { Play, Info } from "lucide-react";
 import { Button } from "../ui/button";
 
 export type CastMember =
   | {
-    name: string;
-    character: string;
-    profile_path: string;
-  }
+      name: string;
+      character: string;
+      profile_path: string;
+    }
   | {
-    name: string;
-    character: string;
-    profile_path: null;
-  };
+      name: string;
+      character: string;
+      profile_path: null;
+    };
 
-interface Movie {
+export interface Movie extends Document {
   id: number;
   title: string;
   genres: string[];
@@ -35,56 +34,74 @@ interface Movie {
   original_language: string;
   tmdb_url: string;
   primary_genre: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-export default function HeroSection() {
+interface HeroBannerMovies {
+  movies: Movie[];
+}
+
+export default function HeroSection({ movies }: HeroBannerMovies) {
   const [index, setIndex] = useState(0);
 
-  // auto-scroll every 5s
+  // Auto-scroll
   useEffect(() => {
+    if (!movies?.length) return;
     const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % trendingMovies.length);
+      setIndex((prev) => (prev + 1) % movies.length);
     }, 10000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [movies]);
+
+  if (!movies?.length) {
+    return <div>No movies found</div>;
+  }
 
   return (
-    <div className="relative w-full h-[90vh] overflow-hidden bg-background text-foreground">
+    <div className="stricky w-full h-[90vh] overflow-hidden bg-background text-foreground mb-20">
       <AnimatePresence mode="wait">
         <motion.div
-          key={trendingMovies[index].id}
+          key={movies[index].id}
           className="absolute inset-0 w-full h-full"
           initial={{ opacity: 0, scale: 1.05 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={{ duration: 1 }}
         >
-          <Image
-            src={trendingMovies[index].backdrop || trendingMovies[index].poster}
-            alt={trendingMovies[index].title}
-            fill
-            priority
-            className="object-cover rounded-2xl"
-          />
+          {movies[index].backdrop || movies[index].poster ? (
+            <Image
+              src={movies[index].backdrop || movies[index].poster}
+              alt={movies[index].title}
+              fill
+              priority
+              className="object-cover rounded-2xl"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-900 flex items-center justify-center text-white">
+              No Image Available
+            </div>
+          )}
           {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/50 via-background/30 to-transparent dark:bg-gradient-to-t dark:from-background dark:via-background/70 dark:to-transparent " />
+          {/* bg-gradient-to-t from-background/50 via-background/30 to-transparent */}
+          <div className="absolute inset-0  dark:bg-gradient-to-t dark:from-background dark:via-background/70 dark:to-transparent " />
         </motion.div>
       </AnimatePresence>
 
       {/* Movie Info Overlay */}
       <div className="absolute bottom-20 left-12 max-sm:left-0 max-w-2xl space-y-4 pr-5 pl-5">
         <motion.h2
-          key={trendingMovies[index].title}
+          key={movies[index].title}
           className="text-5xl max-sm:text-2xl max-md:text-3xl font-extrabold drop-shadow-lg text-foreground"
           initial={{ y: 40, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ duration: 0.8 }}
         >
-          {trendingMovies[index].title}
+          {movies[index].title}
         </motion.h2>
         <p className="text-lg text-foreground line-clamp-3 max-sm:text-sm">
-          {trendingMovies[index].description}
+          {movies[index].description}
         </p>
 
         <div className="flex gap-4 mt-6">

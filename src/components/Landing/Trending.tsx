@@ -3,7 +3,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { trendingMovies } from "../constants/trending";
+import { trendingMovies } from "../../data/trending";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function TrendingCarousel() {
@@ -29,7 +29,6 @@ export default function TrendingCarousel() {
     return () => window.removeEventListener("resize", updateWidth);
   }, []);
 
-
   // Auto-play every 5s
   useEffect(() => {
     const interval = setInterval(() => {
@@ -43,8 +42,8 @@ export default function TrendingCarousel() {
   };
 
   const handlePrev = () => {
-    setActiveIndex((prev) =>
-      (prev - 1 + trendingMovies.length) % trendingMovies.length
+    setActiveIndex(
+      (prev) => (prev - 1 + trendingMovies.length) % trendingMovies.length
     );
   };
 
@@ -58,7 +57,8 @@ export default function TrendingCarousel() {
         {trendingMovies.map((movie, index) => {
           // Relative position (wraps around smoothly)
           const position =
-            (index - activeIndex + trendingMovies.length) % trendingMovies.length;
+            (index - activeIndex + trendingMovies.length) %
+            trendingMovies.length;
 
           // Default transform values
           let x = 0;

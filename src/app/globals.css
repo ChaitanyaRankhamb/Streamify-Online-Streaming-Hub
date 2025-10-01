@@ -157,6 +157,13 @@
 
 }
 
+body, html {
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+
 .box {
   width: 50px;
   height: 50px;
@@ -180,4 +187,10 @@
 
 .responsive-heading {
   @apply max-sm:text-3xl max-md:text-4xl max-lg:text-5xl ;
+}
+
+.movie-title-hover {
+  color: var(--secondary);
+  text-shadow: 0 0 8px oklch(0.56 0.18 200 /0.7);
+  transition: color 0.3s, text-shadow 0.3s;
 }
