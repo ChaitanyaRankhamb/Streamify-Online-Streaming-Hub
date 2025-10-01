@@ -25,6 +25,18 @@ function page() {
       alert("Failed to seed movies");
     }
   };
+
+  const handleNewReleasedMovies = async () => {
+    try {
+      const res = await fetch("/api/scripts/newReleasedMovies");
+      const data = await res.json();
+      alert(data.message || data.error);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to seed movies");
+    }
+  };
+
   return (
     <div>
       <Button
@@ -38,6 +50,12 @@ function page() {
         onClick={handleHeroBannerMovies}
       >
         Hero Banner movies
+      </Button>
+      <Button
+        className="bg-primary text-primary-foreground rounded-md border-2 border-border"
+        onClick={handleNewReleasedMovies}
+      >
+        New Released Movies
       </Button>
     </div>
   );

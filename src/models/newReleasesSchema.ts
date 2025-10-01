@@ -1,5 +1,5 @@
 import { Schema, model, Document, models } from "mongoose";
-import * as z from "zod";
+import z from "zod";
 
 export type CastMember =
   | {
@@ -60,19 +60,18 @@ export const movieValidationSchema = z.object({
   updatedAt: z.date().optional(),
 });
 
-/// Hero Banner interface
-export interface IHeroBanner extends Document {
+/// New Releases interface
+export interface INewRelease extends Document {
   movie: Schema.Types.ObjectId; // reference to Movie
-  position: number; // order in the banner
+  position: number; 
   active: boolean;
   startDate?: Date;
   endDate?: Date;
   createdAt: Date;
   updatedAt: Date;
-}
+};
 
-// Mongoose Schema for Hero Banner
-export const heroBannerSchema = new Schema<IHeroBanner>(
+export const newReleasesSchema = new Schema<INewRelease>(
   {
     movie: { type: Schema.Types.ObjectId, ref: "Movie", required: true },
     position: { type: Number, default: 1 },
@@ -85,7 +84,7 @@ export const heroBannerSchema = new Schema<IHeroBanner>(
   }
 );
 
-// Create HeroBannerModel
-const HeroBannerModel = models.HeroBanner || model<IHeroBanner>("HeroBanner", heroBannerSchema);
+// Create NewReleasesModel
+const NewReleasesModel = models.NewReleases || model<INewRelease>("NewReleases", newReleasesSchema);
 
-export default HeroBannerModel;
+export default NewReleasesModel;

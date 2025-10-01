@@ -1,23 +1,20 @@
-
-
-import { newReleases } from "@/data/NewReleases";
 import HeroSection from "@/components/Home/Hero-section";
 import HomeMovieFeature from "@/components/Home/Home-Movie-Feature";
-import { Button } from "@/components/ui/button";
 import React from "react";
 import HeroSectionServer from "@/components/Home/HeroSectionServer";
+import NewMoviesFeatureServer from "@/components/Home/NewMoviesFeatureServer";
 
 export default async function page() {
-  const movies = await HeroSectionServer();
+  const heroBannerMovies = await HeroSectionServer();
+  const newReleasedMovies = await NewMoviesFeatureServer();
   
   return (
     <div>
-      <HeroSection movies = { movies } />
+      <HeroSection movies = { heroBannerMovies } />
       <HomeMovieFeature
         featureName="New Releases"
-        featureMovieArray={newReleases}
-      />
-      
+        featureMovieArray={ newReleasedMovies }
+      />      
     </div>
   );
 }
