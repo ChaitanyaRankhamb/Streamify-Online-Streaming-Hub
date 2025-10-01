@@ -13,6 +13,7 @@ import { Session } from "inspector/promises";
 import { getToken } from "next-auth/jwt";
 import { NextRequest } from "next/server";
 import { Search } from "lucide-react";
+import SearchComponent from "./SearchComponent";
 
 const navCategories: { title: string; href: string; description?: string }[] = [
   { title: "Home", href: "/" },
@@ -41,6 +42,7 @@ const navCategories: { title: string; href: string; description?: string }[] = [
 export default function StreamifyNavbar() {
   const [isOpen, setIsOpen] = useState(false);
   const router = useRouter();
+  const [openSearch, setOpenSearch] = useState(false);
 
   const { data: session } = useSession();
 
@@ -80,9 +82,11 @@ export default function StreamifyNavbar() {
           {/* Desktop */}
 
           <div className="hidden md:flex items-center gap-4">
-            <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center
-             justify-center border-2 border-border hover:bg-muted-foreground/20 active:scale-90">
-              <Search size={18} />
+            <div
+              className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center
+             justify-center border-2 border-border hover:bg-muted-foreground/20 active:scale-90"
+            >
+              <Search size={18} onClick={() => setOpenSearch(true)} />
             </div>
             <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border border-2-border hover:bg-muted-foreground/30">
               <ModeToggle />
@@ -119,20 +123,16 @@ export default function StreamifyNavbar() {
           {/* Mobile */}
           <div className="flex md:hidden items-center gap-2">
             <div className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border-2 border-border hover:bg-muted-foreground/20 active:scale-90">
-              <Search size={18} className="" />
+              <Search size={18} onClick={() => setOpenSearch(true)} />
             </div>
             <div className="bg-background/80 w-[30px] h-[30px] rounded-[8px] flex items-center justify-center border border-1-border hover:bg-muted-foreground/30">
-              <ModeToggle  />
+              <ModeToggle />
             </div>
             <button
               onClick={() => setIsOpen(!isOpen)}
               className="bg-background/80 w-[36px] h-[36px] rounded-[8px] flex items-center justify-center border border-1-border text-[var(--foreground)"
             >
-              {isOpen ? (
-                  <span>✕</span>
-              ) : (
-                  <span>☰</span>
-              )}
+              {isOpen ? <span>✕</span> : <span>☰</span>}
             </button>
             <Avatar>
               {session ? (
@@ -186,6 +186,8 @@ export default function StreamifyNavbar() {
           )}
         </div>
       )}
+      {/* Search overlay */}
+      <SearchComponent open={openSearch} setOpen={setOpenSearch} />
     </nav>
   );
 }
